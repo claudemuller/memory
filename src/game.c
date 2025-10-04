@@ -202,12 +202,14 @@ static void update_in_game(void)
             memset(state.input_quads, false, sizeof(bool) * 4);
             u8 q = state.quad_stack.quads[state.curr_show_quad++];
             util_info("%d", q);
-            state.input_quads[q] = true;
 
-            if (state.curr_show_quad >= QUAD_COUNT) {
+            if (state.curr_show_quad > QUAD_COUNT) {
                 state.curr_state = STATE_IN_GAME_INPUT;
                 util_info("next state");
+                return;
             }
+
+            state.input_quads[q] = true;
         }
 
         return;
