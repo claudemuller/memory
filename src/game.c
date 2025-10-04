@@ -319,6 +319,25 @@ static void render_in_game(void)
         {1.0f, 1.0f, 0.6f, 1.0f}  // lighter yellow
     };
 
+    if (prev_quad == state.curr_show_quad) {
+        if (radius > 1.5f * QUAD_RADIUS) {
+            radius = QUAD_RADIUS;
+            prev_quad++;
+            return;
+        }
+        // if (state.input_quads[state.curr_show_quad]) {
+        f32 start = (float)state.curr_show_quad * (M_PI / 2.0f);
+        f32 end = (float)(state.curr_show_quad + 1) * (M_PI / 2.0f);
+
+        radius *= 1.1f;
+
+        SDL_FColor colour = hi_colours[state.curr_show_quad];
+        colour.a *= 0.5f;
+
+        SDL_SetRenderDrawBlendMode(state.renderer, SDL_BLENDMODE_BLEND);
+        render_sector(state.renderer, cx, cy, radius, start, end, segsPerQuarter, colour);
+    }
+
     SDL_SetRenderDrawBlendMode(state.renderer, SDL_BLENDMODE_NONE);
 
     for (size_t q = 0; q < QUAD_COUNT; ++q) {
@@ -347,25 +366,4 @@ static void render_in_game(void)
 
         SDL_RenderLine(state.renderer, x1, y1, x2, y2);
     }
-
-    if (prev_quad != state.curr_show_quad) {
-        return;
-    }
-    if (radius > 3.0f * QUAD_RADIUS) {
-        radius = QUAD_RADIUS;
-        prev_quad++;
-        return;
-    }
-    // if (state.input_quads[state.curr_show_quad]) {
-    f32 start = (float)state.curr_show_quad * (M_PI / 2.0f);
-    f32 end = (float)(state.curr_show_quad + 1) * (M_PI / 2.0f);
-
-    radius *= 1.1f;
-
-    SDL_FColor colour = hi_colours[state.curr_show_quad];
-    colour.a *= 0.5f;
-
-    SDL_SetRenderDrawBlendMode(state.renderer, SDL_BLENDMODE_BLEND);
-    render_sector(state.renderer, cx, cy, radius, start, end, segsPerQuarter, colour);
-    // }
 }
