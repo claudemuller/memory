@@ -145,15 +145,19 @@ static void render_debug_ui(void)
     case STATE_MAIN_MENU: {
         snprintf(curr_state, 20, "main_menu");
     } break;
+
     case STATE_WIN_SCREEN: {
         snprintf(curr_state, 20, "win");
     } break;
+
     case STATE_GAME_OVER_SCREEN: {
         snprintf(curr_state, 20, "game_over");
     } break;
+
     case STATE_IN_GAME: {
         snprintf(curr_state, 20, "in_game");
     } break;
+
     case STATE_IN_GAME_INPUT: {
         snprintf(curr_state, 20, "in_game_input");
     } break;
@@ -287,10 +291,12 @@ static void render_win_screen(void)
     SDL_RenderDebugText(state.renderer, 20.0f, 20.0f, "You win. Press <space> start again, or <escape> to quit");
 }
 
+float radius = QUAD_RADIUS;
+u8 prev_quad = 0;
+
 static void render_in_game(void)
 {
     float cx = 400.0f, cy = 300.0f;
-    float radius = 200.0f;
     u16 segsPerQuarter = 40;
 
     // colours for 4 slices
@@ -313,14 +319,16 @@ static void render_in_game(void)
         {1.0f, 1.0f, 0.6f, 1.0f}  // lighter yellow
     };
 
+    SDL_SetRenderDrawBlendMode(state.renderer, SDL_BLENDMODE_NONE);
+
     for (size_t q = 0; q < QUAD_COUNT; ++q) {
         f32 start = (float)q * (M_PI / 2.0f);
         f32 end = (float)(q + 1) * (M_PI / 2.0f);
 
         if (state.input_quads[q]) {
-            render_sector(state.renderer, cx, cy, radius, start, end, segsPerQuarter, hi_colours[q]);
+            render_sector(state.renderer, cx, cy, QUAD_RADIUS, start, end, segsPerQuarter, hi_colours[q]);
         } else {
-            render_sector(state.renderer, cx, cy, radius, start, end, segsPerQuarter, colours[q]);
+            render_sector(state.renderer, cx, cy, QUAD_RADIUS, start, end, segsPerQuarter, colours[q]);
         }
     }
 
@@ -339,4 +347,25 @@ static void render_in_game(void)
 
         SDL_RenderLine(state.renderer, x1, y1, x2, y2);
     }
+
+    if (prev_quad != state.curr_show_quad) {
+        return;
+    }
+    if (radius > 3.0f * QUAD_RADIUS) {
+        radius = QUAD_RADIUS;
+        prev_quad++;
+        return;
+    }
+    // if (state.input_quads[state.curr_show_quad]) {
+    f32 start = (float)state.curr_show_quad * (M_PI / 2.0f);
+    f32 end = (float)(state.curr_show_quad + 1) * (M_PI / 2.0f);
+
+    radius *= 1.1f;
+
+    SDL_FColor colour = hi_colours[state.curr_show_quad];
+    colour.a *= 0.5f;
+
+    SDL_SetRenderDrawBlendMode(state.renderer, SDL_BLENDMODE_BLEND);
+    render_sector(state.renderer, cx, cy, radius, start, end, segsPerQuarter, colour);
+    // }
 }

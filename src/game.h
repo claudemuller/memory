@@ -11,6 +11,7 @@
 #define MILLISECS_PER_FRAME 1000 / FPS
 
 #define MAX_MOVES 100
+#define QUAD_RADIUS 200.0f
 
 typedef void (*StateFn)(void);
 
