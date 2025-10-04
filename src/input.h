@@ -29,6 +29,7 @@ typedef enum {
 
 typedef struct {
     u32 btns;
+    u32 btns_prev;
 } Keyboard;
 
 typedef struct {
@@ -36,6 +37,8 @@ typedef struct {
 } Gamepad;
 
 typedef struct {
+    f32 x;
+    f32 y;
     u32 btns;
 } Mouse;
 
@@ -45,10 +48,12 @@ typedef struct {
     Gamepad gamepad;
 } Input;
 
-#define IS_SET(keystate, keymask) (((keystate) & (keymask)) == (keymask))
+#define IS_SET(mask, bit) ((mask) & (1U << (bit)))
 
 void input_process(Input* input, SDL_Event* ev);
+void input_clear(Input* input);
 bool input_is_key_pressed(Input* input, KeyboardButtons btn);
+bool input_is_key_down(Input* input, KeyboardButtons btn);
 bool input_is_mouse_btn_pressed(Input* input, MouseButtons btn);
 bool input_is_gamepad_btn_pressed(Input* input, GamepadButtons btn);
 

@@ -99,6 +99,8 @@ void game_destroy(void)
 
 static void process_events(void)
 {
+    input_clear(&state.input);
+
     SDL_Event ev;
 
     while (SDL_PollEvent(&ev)) {

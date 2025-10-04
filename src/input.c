@@ -12,25 +12,37 @@ void input_process(Input* input, SDL_Event* ev)
     input_process_gamepad(input, ev);
 }
 
+void input_clear(Input* input)
+{
+    input->kb.btns_prev = input->kb.btns;
+}
+
 bool input_is_key_pressed(Input* input, KeyboardButtons btn)
 {
-    return IS_SET(input->kb.btns, (1U << btn));
+    return IS_SET(input->kb.btns, btn) && !IS_SET(input->kb.btns_prev, btn);
+}
+
+bool input_is_key_down(Input* input, KeyboardButtons btn)
+{
+    return IS_SET(input->kb.btns, btn);
 }
 
 bool input_is_mouse_btn_pressed(Input* input, MouseButtons btn)
 {
-    return IS_SET(input->mouse.btns, (1U << btn));
+    return IS_SET(input->mouse.btns, btn);
 }
 
 bool input_is_gamepad_btn_pressed(Input* input, GamepadButtons btn)
 {
-    return IS_SET(input->gamepad.btns, (1U << btn));
+    return IS_SET(input->gamepad.btns, btn);
 }
 
 // ------------------------------------------------------------------------------------------------
 
 static void input_process_mouse(Input* input, SDL_Event* ev)
 {
+    input->mouse.x = ev->motion.x;
+    input->mouse.y = ev->motion.y;
 }
 
 static void input_process_keyboard(Input* input, SDL_Event* ev)
